@@ -17,18 +17,23 @@ def confidence_score(answer, results):
 
 
 def format_sources(results):
-    sources = []
+    formatted = []
 
-    for i, r in enumerate(results, start=1):
-        metadata = r.get("metadata", {})
-        doc_id = metadata.get("doc_id", "N/A")
-        chunk_id = metadata.get("chunk_id", "N/A")
-        distance = r.get("distance", 0)
+    for i, r in enumerate(results, 1):
+        distance = round(r["distance"], 4)
 
-        preview = r["text"][:450].replace("\n", " ").strip()
+        source = f"""
+📄 Source {i}
+━━━━━━━━━━━━━━━━━━
+• Similarity Score: {distance}
+• Document ID: {r['metadata'].get('doc_id')}
+• Chunk ID: {r['metadata'].get('chunk_id')}
 
-        sources.append(
-            f"Source {i} | Document {doc_id} | Chunk {chunk_id} | Distance {distance:.4f}\n{preview}..."
-        )
+Clause Preview:
+{r['text'][:500]}
 
-    return "\n\n".join(sources)
+"""
+
+        formatted.append(source)
+
+    return "\n".join(formatted)
