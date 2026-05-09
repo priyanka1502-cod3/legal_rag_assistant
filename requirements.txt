@@ -1,0 +1,7 @@
+gradio
+datasets
+pdfplumber
+sentence-transformers
+faiss-cpu
+numpy
+groq
