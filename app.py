@@ -24,7 +24,7 @@ def build_legal_index(limit):
 
     is_index_ready = True
 
-    return f"Loaded {len(documents)} legal documents and indexed {total_chunks} contract chunks."
+    return f"✅ Loaded {len(documents)} legal documents and indexed {total_chunks} contract chunks."
 
 
 def ask_legal_question(query, top_k):
@@ -43,13 +43,19 @@ def ask_legal_question(query, top_k):
     confidence = confidence_score(answer, results)
     sources = format_sources(results)
 
-    final_answer = f"""### Answer
+    final_answer = f"""## ✅ Legal Analysis
+
 {answer}
 
 ---
 
-### Confidence
-{confidence}
+## 🔍 Confidence Assessment
+
+**{confidence}**
+
+---
+
+⚠️ This system is for educational and research purposes only and does not constitute legal advice.
 """
 
     return final_answer, sources
@@ -57,18 +63,20 @@ def ask_legal_question(query, top_k):
 
 sample_questions = [
     "Are there indemnification clauses?",
-    "What warranty disclaimer clauses are mentioned?",
-    "Are there limitation of liability clauses?",
-    "What governing law clauses are mentioned?",
-    "Are there third-party beneficiary clauses?"
+    "What liability limitations are mentioned?",
+    "Are there termination conditions?",
+    "What warranty disclaimers exist?",
+    "What governing law clauses are included?",
+    "Are there confidentiality obligations?",
+    "Does the agreement mention arbitration?"
 ]
 
 
 with gr.Blocks(theme=gr.themes.Soft(), title="Legal AI Contract Review Assistant") as demo:
-    gr.Markdown("# Legal AI Contract Review Assistant")
+    gr.Markdown("# ⚖️ Legal AI Contract Review Assistant")
     gr.Markdown(
-        "Analyze legal contract clauses using Retrieval-Augmented Generation, "
-        "FAISS vector search, CUAD contract data, and Groq Llama 3."
+        "Analyze legal contract clauses using Retrieval-Augmented Generation (RAG), "
+        "FAISS semantic search, CUAD contract datasets, and Groq-hosted Llama 3."
     )
 
     with gr.Row():
@@ -104,8 +112,8 @@ with gr.Blocks(theme=gr.themes.Soft(), title="Legal AI Contract Review Assistant
 
     ask_btn = gr.Button("Ask")
 
-    answer = gr.Markdown(label="Answer")
-    sources = gr.Textbox(label="Retrieved Contract Clauses", lines=16)
+    answer = gr.Markdown(label="Legal Analysis")
+    sources = gr.Textbox(label="📌 Retrieved Contract Clauses & Evidence", lines=16)
 
     ask_btn.click(
         fn=ask_legal_question,
@@ -121,8 +129,8 @@ with gr.Blocks(theme=gr.themes.Soft(), title="Legal AI Contract Review Assistant
     gr.Markdown(
         """
         ---
-        Built with CUAD, FAISS, Sentence Transformers, Groq Llama 3, and Gradio.
-        This tool is for contract analysis assistance only and does not provide legal advice.
+        Built with CUAD, FAISS, Sentence Transformers, Groq Llama 3, and Gradio.  
+        ⚠️ Educational/research tool only. Not legal advice.
         """
     )
 
