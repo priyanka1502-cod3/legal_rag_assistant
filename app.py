@@ -113,12 +113,15 @@ with gr.Blocks(theme=gr.themes.Soft(), title="Legal AI Contract Review Assistant
     ask_btn = gr.Button("Ask")
 
     answer = gr.Markdown(label="Legal Analysis")
-    sources = gr.Textbox(label="📌 Retrieved Contract Clauses & Evidence", lines=16)
+
+    with gr.Accordion("📌 Retrieved Contract Clauses & Evidence", open=False):
+        sources = gr.Markdown()
 
     ask_btn.click(
         fn=ask_legal_question,
         inputs=[query, top_k],
-        outputs=[answer, sources]
+        outputs=[answer, sources],
+        show_progress=True
     )
 
     gr.Examples(
