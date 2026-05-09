@@ -1,6 +1,4 @@
 from datasets import load_dataset
-import pdfplumber
-import tempfile
 
 
 def load_cuad_documents(limit=30):
@@ -13,32 +11,34 @@ def load_cuad_documents(limit=30):
     documents = []
 
     for idx, item in enumerate(dataset):
-        pdf_obj = item["pdf"]
+        text_parts = []
 
         try:
-            with tempfile.NamedTemporaryFile(suffix=".pdf") as tmp:
-                tmp.write(pdf_obj)
-                tmp.flush()
+            pdf_obj = item.get("pdf")
 
-                text_parts = []
+            if pdf_obj is not None and hasattr(pdf_obj, "pages"):
+                for page in pdf_obj.pages:
+                    text = page.extract_text()
+                    if text:
+                        text_parts.append(text.strip())
 
-                with pdfplumber.open(tmp.name) as pdf:
-                    for page in pdf.pages:
-                        text = page.extract_text()
-                        if text:
-                            text_parts.append(text.strip())
+            # fallback: check common text columns
+            for key in ["text", "context", "contract", "document"]:
+                if key in item and item[key]:
+                    text_parts.append(str(item[key]))
 
-                full_text = "\n".join(text_parts)
+            full_text = "\n".join(text_parts)
 
-                if full_text.strip():
-                    documents.append({
-                        "text": full_text,
-                        "metadata": {
-                            "doc_id": idx
-                        }
-                    })
+            if full_text.strip():
+                documents.append({
+                    "text": full_text,
+                    "metadata": {
+                        "doc_id": idx
+                    }
+                })
 
-        except Exception:
+        except Exception as e:
+            print(f"Skipping document {idx}: {e}")
             continue
 
     return documents
